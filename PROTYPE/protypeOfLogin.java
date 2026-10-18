@@ -1,7 +1,6 @@
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.File;
+
+
 
 
 public class protypeOfLogin {
@@ -21,13 +20,11 @@ public class protypeOfLogin {
     
         String userHome = System.getProperty("user.home");
 
-        try {
-            Path dir = Files.createDirectories(Paths.get(userHome, "CardGame/User"));
-            System.out.println("User directory is ready.");
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();    
-            System.out.println("Failed to create user directory.");
+        File folder = new File(userHome + "/CardGameUsers");
+        if (folder.exists()) {
+            System.out.println("User directory already exists.");
+        } else {
+            folder.mkdir();
         }
 
 
