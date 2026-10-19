@@ -7,6 +7,6 @@ public class Game {
     
         public Game() {
             gamePanel = new GamePanel();
-            titlepage = new titlePage();
+            titlepage = new titlePage(gamePanel);
         }
 }
