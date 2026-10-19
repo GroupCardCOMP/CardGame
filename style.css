@@ -30,6 +30,8 @@ body{
         padding: 10px;
         margin: 15px 0 15px 0;
         background: pink;
+        text-decoration: none;
+        color: inherit;
     }
     .box-options:hover{
         cursor: pointer;
