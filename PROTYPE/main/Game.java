@@ -1,4 +1,4 @@
-
+package main;
 
 public class Game {
 
@@ -8,5 +8,6 @@ public class Game {
         public Game() {
             gamePanel = new GamePanel();
             titlepage = new titlePage(gamePanel);
+            gamePanel.requestFocus();
         }
 }
