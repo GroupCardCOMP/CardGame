@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "MainClass",
+            "request": "launch",
+            "mainClass": "main.MainClass",
+            "projectName": "CardGame_d682ddf"
+        },
+        {
             "type": "editor-browser",
             "request": "launch",
             "name": "Open index.html",

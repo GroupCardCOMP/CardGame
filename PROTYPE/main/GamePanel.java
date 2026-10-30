@@ -2,46 +2,47 @@ package main;
 
 import inputs.Keyboardinputs;
 import inputs.MouseInputs;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import javax.swing.JPanel;
+import static main.Game.GAME_HEIGHT;
+import static main.Game.GAME_WIDTH;
 
 public class GamePanel extends JPanel{
+    private Game game;
 
     private MouseInputs mouseInputs;
-    private int xdelta = 100, ydelta = 100;
-    private float xDir = 1f, yDir = 1f;
 
 
-    public GamePanel() {
+    public GamePanel(Game game) {
+        this.game = game;
 
         mouseInputs = new MouseInputs(this);
+        setPanelSize();
         addMouseListener(mouseInputs);
         addMouseMotionListener(mouseInputs);
         addKeyListener(new Keyboardinputs(this));
 
     }
-
-    public void changeXDelta(int delta) {
-        this.xdelta += delta;
-        repaint();
+    
+    private void setPanelSize(){
+        Dimension dim = new Dimension(GAME_WIDTH, GAME_HEIGHT);
+        setPreferredSize(dim);
     }
 
-    public void changeYDelta(int delta) {
-        this.ydelta += delta;
-        repaint();
-    }  
 
-    public void setRectanglePosition(int x, int y) {
-        this.xdelta = x;
-        this.ydelta = y;
-        repaint();
+    public void updateGame() {
+
     }
 
     
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        game.render(g);
+    }
 
-        g.fillRect(xdelta, ydelta, 200, 50);
+    public Game getGame() {
+        return game;
     }
     
 }

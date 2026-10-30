@@ -1,9 +1,11 @@
 package inputs;
 
+import gamestates.Gamestate;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import main.GamePanel;
+
 
 public class MouseInputs implements MouseListener, MouseMotionListener {
     private GamePanel gamePanel;
@@ -14,19 +16,44 @@ public class MouseInputs implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        // Handle mouse click events\
-        System.out.println("Mouse clicked at: (" + e.getX() + ", " + e.getY() + ")");
+       switch (Gamestate.state) {
+        case PLAYING:
+            //gamePanel.getGame();
+            break;
+        default:
+            break;
+       }
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        // Handle mouse press events
+            switch (Gamestate.state) {
+            case MENU:
+                gamePanel.getGame().getMenu().mousePressed(e);
+                break;
+            case PLAYING:
+                //gamePanel.getGame();
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        // Handle mouse release events
+        switch (Gamestate.state) {
+            case MENU:
+                gamePanel.getGame().getMenu().mouseReleased(e);
+                break;
+            case PLAYING:
+                //gamePanel.getGame();
+                break;
+            default:
+                break;
+        }
+        
     }
+    
 
     @Override
     public void mouseEntered(MouseEvent e) {
@@ -45,9 +72,16 @@ public class MouseInputs implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        // Handle mouse move events
-        gamePanel.setRectanglePosition(e.getX(), e.getY());
-        System.out.println("Mouse moved to: (" + e.getX() + ", " + e.getY() + ")");
+        switch (Gamestate.state) {
+            case MENU:
+                gamePanel.getGame().getMenu().mouseMoved(e);
+                break;
+            case PLAYING:
+                //gamePanel.getGame();
+                break;
+            default:
+                break;
+        }
     }
 
 }
