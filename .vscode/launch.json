@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "protypeOfLogin",
+            "request": "launch",
+            "mainClass": "protypeOfLogin",
+            "projectName": "CardGame_7f805b73"
+        },
+        {
+            "type": "java",
+            "name": "MainClass",
+            "request": "launch",
+            "mainClass": "main.MainClass",
+            "projectName": "CardGame_7f805b73"
+        },
+        {
+            "type": "java",
             "name": "MainClass",
             "request": "launch",
             "mainClass": "main.MainClass",
