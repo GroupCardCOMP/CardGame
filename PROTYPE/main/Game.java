@@ -1,6 +1,7 @@
 package main;
 
 import gamestates.Gamestate;
+import gamestates.Login;
 import gamestates.Menu;
 import java.awt.Graphics;
 
@@ -14,10 +15,12 @@ public class Game implements Runnable {
     private final int UPS_SET = 200;
 
     private Menu menu;
+    private Login login;
 
 
     public final static int TILES_DEFAULT_SIZE = 32;
     public final static float SCALE = 2f;
+    public final static float SCALEX = 1f;
     public final static int TILES_IN_WIDTH = 26;
     public final static int TILES_IN_HEIGHT = 14;
     public final static int TILES_SIZE = (int) (TILES_DEFAULT_SIZE * SCALE);
@@ -35,6 +38,7 @@ public class Game implements Runnable {
         }
 
         private void initClasses() {
+            login = new Login(this);
             menu = new Menu(this);
         }
 
@@ -45,6 +49,9 @@ public class Game implements Runnable {
 
         public void update() {
             switch (Gamestate.state) {
+                case LOGIN:
+                    login.update();
+                    break;
                 case MENU:
                     menu.update();
                     break;
@@ -64,6 +71,9 @@ public class Game implements Runnable {
 
         public void render(Graphics g) {
             switch (Gamestate.state) {
+                case LOGIN:
+                    login.draw(g);
+                    break;
                 case MENU:
                     menu.draw(g);
                     break;
@@ -120,7 +130,11 @@ public class Game implements Runnable {
         }
     }
 
-    public Menu getMenu(){
+    public Login getLogin(){
+        return login;
+    }
+
+    public Menu getMenu() {
         return menu;
     }
 }

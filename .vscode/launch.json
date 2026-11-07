@@ -9,6 +9,13 @@
             "name": "protypeOfLogin",
             "request": "launch",
             "mainClass": "protypeOfLogin",
+            "projectName": "CardGame_d682ddf"
+        },
+        {
+            "type": "java",
+            "name": "protypeOfLogin",
+            "request": "launch",
+            "mainClass": "protypeOfLogin",
             "projectName": "CardGame_7f805b73"
         },
         {

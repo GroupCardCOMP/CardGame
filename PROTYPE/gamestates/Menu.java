@@ -5,15 +5,13 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-
 import main.Game;
-import main.UserAccounts;
 import ui.MenuButton;
 import utilz.LoadSave;
 
 public class Menu extends State implements Statemethods {
 
-    private MenuButton[] buttons = new MenuButton[3];
+    private MenuButton[] buttons = new MenuButton[6];
 
     private BufferedImage backgroundImg;
 
@@ -29,7 +27,7 @@ public class Menu extends State implements Statemethods {
     private void loadBackground() {
 
         backgroundImg = LoadSave.GetSpriteAtlas(
-            LoadSave.MenuBackground
+            LoadSave.AccMenuBackground
         );
 
         menuWidth = (int) (backgroundImg.getWidth() * Game.SCALE);
@@ -41,22 +39,43 @@ public class Menu extends State implements Statemethods {
 
     private void loadButtons() {
 
+        int buttonInterval = (int) (56 * Game.SCALE);
+        int buttonStartY = (int) (100 * Game.SCALE);
+
         buttons[0] = new MenuButton(
             Game.GAME_WIDTH / 2,
-            (int) (150 * Game.SCALE),
+            buttonStartY + (int) (0 * buttonInterval),
             0, Gamestate.PLAYING
         );
 
         buttons[1] = new MenuButton(
             Game.GAME_WIDTH / 2,
-            (int) (220 * Game.SCALE),
-            1, Gamestate.MENU
+            buttonStartY + (int) (1 * buttonInterval),
+            1, Gamestate.STORE
         );
 
         buttons[2] = new MenuButton(
             Game.GAME_WIDTH / 2,
-            (int) (290 * Game.SCALE),
-            2, Gamestate.QUIT
+            buttonStartY + (int) (2 * buttonInterval),
+            2, Gamestate.COLLECTION
+        );
+
+        buttons[3] = new MenuButton(
+            Game.GAME_WIDTH / 2,
+            buttonStartY + (int) (3 * buttonInterval),
+            3, Gamestate.TRADE
+        );
+
+        buttons[4] = new MenuButton(
+            Game.GAME_WIDTH / 2,
+            buttonStartY + (int) (4 * buttonInterval),
+            4, Gamestate.OPTIONS
+        );
+
+        buttons[5] = new MenuButton(
+            Game.GAME_WIDTH / 2,
+            buttonStartY + (int) (5 * buttonInterval),
+            5, Gamestate.QUIT
         );
     }
 
@@ -110,18 +129,31 @@ public class Menu extends State implements Statemethods {
                 switch (i) {
 
                     case 0:
-                        // OLD ACCOUNT
-                        if (UserAccounts.login()) {
                             Gamestate.state = Gamestate.PLAYING;
-                        }
+
                         break;
 
                     case 1:
-                        // NEW ACCOUNT 
-                        UserAccounts.register();
+                        // STORE
+                        Gamestate.state = Gamestate.STORE;
                         break;
 
                     case 2:
+                        // COLLECTION
+                        Gamestate.state = Gamestate.COLLECTION;
+                        break;
+
+                    case 3:
+                        // TRADE
+                        Gamestate.state = Gamestate.TRADE;
+                        break;
+
+                    case 4:
+                        // OPTIONS
+                        Gamestate.state = Gamestate.OPTIONS;
+                        break;
+
+                    case 5:
                         // QUIT
                         System.exit(0);
                         break;
