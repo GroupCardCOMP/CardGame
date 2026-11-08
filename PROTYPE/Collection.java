@@ -30,7 +30,7 @@ public class Collection implements ActionListener {
         for (int i = 1; i <= totalCells; i++) { //goes through each grid
             JPanel cards = new JPanel();
 
-            BufferedImage ogicon = ImageIO.read(new File("PROTYPE\\main\\image\\64x64file.png")); //sprite sheet placeholder
+            BufferedImage ogicon = ImageIO.read(new File("PROTYPE\\image\\64x64file.png")); //sprite sheet placeholder
             BufferedImage subimage = ogicon.getSubimage(10, 5, 4, 6); //get subimage from sprite sheet
 
             Image image = subimage.getScaledInstance(100, 100, Image.SCALE_SMOOTH); //resize image to fit grid

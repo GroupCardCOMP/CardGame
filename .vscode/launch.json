@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "MainClass",
+            "request": "launch",
+            "mainClass": "MainClass",
+            "projectName": "CardGame_d682ddf"
+        },
+        {
+            "type": "java",
+            "name": "Collection",
+            "request": "launch",
+            "mainClass": "Collection",
+            "projectName": "CardGame_d682ddf"
+        },
+        {
+            "type": "java",
             "name": "Collection",
             "request": "launch",
             "mainClass": "main.Collection",

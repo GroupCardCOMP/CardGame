@@ -1,17 +1,11 @@
 package gamestates;
 
 import java.awt.Graphics;
-import javax.swing.*;
-import java.awt.Color;
-import java.awt.MouseEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-
 import main.Game;
-import main.UserAccounts;
 import ui.BackButton;
-import ui.MenuButton;
 import utilz.LoadSave;
 
 
