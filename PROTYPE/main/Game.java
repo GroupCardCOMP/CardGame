@@ -4,6 +4,7 @@ import gamestates.Collection;
 import gamestates.Gamestate;
 import gamestates.Login;
 import gamestates.Menu;
+import gamestates.Playing;
 import java.awt.Graphics;
 
 public class Game implements Runnable {
@@ -17,6 +18,7 @@ public class Game implements Runnable {
     private Menu menu;
     private Login login;
     private Collection collection;
+    private Playing playing;
 
 
     public final static int TILES_DEFAULT_SIZE = 32;
@@ -42,6 +44,7 @@ public class Game implements Runnable {
             login = new Login(this);
             menu = new Menu(this);
             collection = new Collection(this);
+            playing = new Playing(this);
         }
 
         private void startGameLoop() {
@@ -58,7 +61,7 @@ public class Game implements Runnable {
                     menu.update();
                     break;
                 case PLAYING:
-                    // Update playing state
+                    playing.update();
                     break;
                 case STORE:
                     // Update store state
@@ -89,7 +92,7 @@ public class Game implements Runnable {
                     menu.draw(g);
                     break;
                 case PLAYING:
-                    // Render playing state
+                    playing.draw(g);
                     break;
                 case STORE:
                     // Render store state
@@ -163,6 +166,10 @@ public class Game implements Runnable {
 
     public Collection getCollection() {
         return collection;
+    }
+
+    public Playing getPlaying() {
+        return playing;
     }
 
 }

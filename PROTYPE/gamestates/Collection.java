@@ -17,7 +17,8 @@ public class Collection extends State implements Statemethods{
 
         private int menuX, menuY, menuWidth, menuHeight;
 
-
+        int rows = 5;
+        int cols = 4;
 
 
     public Collection(Game game) {
@@ -33,8 +34,8 @@ public class Collection extends State implements Statemethods{
             LoadSave.ninebynine
         );
 
-        menuWidth = (int) (backgroundImg.getWidth() * Game.SCALE);
-        menuHeight = (int) (backgroundImg.getHeight() * Game.SCALE);
+        menuWidth = (int) (backgroundImg.getWidth() * 1f);
+        menuHeight = (int) (backgroundImg.getHeight() * 1f);
 
         menuX = Game.GAME_WIDTH / 2 - menuWidth / 2;
         menuY = (int) (0 * Game.SCALE);
@@ -68,11 +69,12 @@ public class Collection extends State implements Statemethods{
         for (BackButton mb : backButton) {
             mb.draw(g);
         }
+
+        
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -132,12 +134,10 @@ public class Collection extends State implements Statemethods{
 
     @Override
     public void keyPressed(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }
