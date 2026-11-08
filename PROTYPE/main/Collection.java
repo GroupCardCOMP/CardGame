@@ -1,14 +1,18 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+
 
 public class Collection implements ActionListener {
     private JFrame frame = new JFrame();
     private JLabel label = new JLabel("collection");
     private JPanel backMenu = new JPanel(new BorderLayout());
 
-    public Collection() {
+    public Collection() throws Exception {
         int rows = 5;
         int cols = 4;
         int horizontalGap = 5;  // pixels between columns
@@ -25,8 +29,11 @@ public class Collection implements ActionListener {
         int totalCells = rows * cols;
         for (int i = 1; i <= totalCells; i++) { //goes through each grid
             JPanel cards = new JPanel();
-            ImageIcon ogicon = new ImageIcon("src\\image\\goat side profile.jpg"); //placeholder img
-            Image image = ogicon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH); //resize image to fit grid
+
+            BufferedImage ogicon = ImageIO.read(new File("PROTYPE\\main\\image\\64x64file.png")); //sprite sheet placeholder
+            BufferedImage subimage = ogicon.getSubimage(10, 5, 4, 6); //get subimage from sprite sheet
+
+            Image image = subimage.getScaledInstance(100, 100, Image.SCALE_SMOOTH); //resize image to fit grid
             ImageIcon scaledIcon = new ImageIcon(image); //set back to icon
             JButton button = new JButton(scaledIcon); //makes button into scaled image
 
@@ -41,7 +48,7 @@ public class Collection implements ActionListener {
             label.setForeground(Color.WHITE);
             cards.add(label);
 
-            // Add the card to the grid container
+            //Add the card to the grid container
             gridContainer.add(cards);
         }
         // set up the frame and display it
@@ -53,16 +60,15 @@ public class Collection implements ActionListener {
         frame.setVisible(true);
         frame.setSize(900, 900);
         frame.setResizable(false);
-        
-    }
+        }
 
     // process the button clicks
     public void actionPerformed(ActionEvent e) { //add click function
-        
+        frame.dispose(); //close current frame
     }
 
     // create one Frame
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception{
         new Collection();
     }
 }
