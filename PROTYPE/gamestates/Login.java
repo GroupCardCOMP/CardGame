@@ -1,3 +1,4 @@
+
 package gamestates;
 
 import java.awt.Graphics;
@@ -12,59 +13,55 @@ import ui.MenuButton;
 import utilz.LoadSave;
 import ui.LoginButton;
 
-
 public class Login extends State implements Statemethods {
 
     private LoginButton[] buttons = new LoginButton[3];
-
     private BufferedImage backgroundImg;
-
     private int menuX, menuY, menuWidth, menuHeight;
 
     public Login(Game game) {
         super(game);
-
         loadButtons();
         loadBackground();
     }
 
     private void loadBackground() {
-
         backgroundImg = LoadSave.GetSpriteAtlas(
-            LoadSave.MenuBackground
+            "res/login_pixel_background.png"
         );
-
-        menuWidth = (int) (backgroundImg.getWidth() * Game.SCALE);
-        menuHeight = (int) (backgroundImg.getHeight() * Game.SCALE);
-
-        menuX = Game.GAME_WIDTH / 2 - menuWidth / 2;
-        menuY = (int) (45 * Game.SCALE);
+        menuX = 0;
+        menuY = 0;
+        menuWidth = Game.GAME_WIDTH;
+        menuHeight = Game.GAME_HEIGHT;
     }
 
     private void loadButtons() {
+        int[][] r = {
+            {570,445,510,100},
+            {570,565,510,100},
+            {570,685,510,100}
+        };
 
-        buttons[0] = new LoginButton(
-            Game.GAME_WIDTH / 2,
-            (int) (150 * Game.SCALE),
-            0, Gamestate.MENU
-        );
+        Gamestate[] states = {
+            Gamestate.MENU,
+            Gamestate.NEW_ACCOUNT,
+            Gamestate.QUIT
+        };
 
-        buttons[1] = new LoginButton(
-            Game.GAME_WIDTH / 2,
-            (int) (220 * Game.SCALE),
-            1, Gamestate.NEW_ACCOUNT
-        );
+        for (int i = 0; i < buttons.length; i++) {
+            int x = r[i][0] * Game.GAME_WIDTH / 1670;
+            int y = r[i][1] * Game.GAME_HEIGHT / 941;
+            int w = r[i][2] * Game.GAME_WIDTH / 1670;
+            int h = r[i][3] * Game.GAME_HEIGHT / 941;
 
-        buttons[2] = new LoginButton(
-            Game.GAME_WIDTH / 2,
-            (int) (290 * Game.SCALE),
-            2, Gamestate.QUIT
-        );
+            buttons[i] = new LoginButton(
+                x + w/2, y, i, states[i], w, h
+            );
+        }
     }
 
     @Override
     public void update() {
-
         for (LoginButton mb : buttons) {
             mb.update();
         }
@@ -72,7 +69,6 @@ public class Login extends State implements Statemethods {
 
     @Override
     public void draw(Graphics g) {
-
         g.drawImage(
             backgroundImg,
             menuX, menuY,
@@ -91,9 +87,7 @@ public class Login extends State implements Statemethods {
 
     @Override
     public void mousePressed(MouseEvent e) {
-
         for (LoginButton mb : buttons) {
-
             if (isIn(e, mb)) {
                 mb.setMousePressed(true);
             }
@@ -102,17 +96,12 @@ public class Login extends State implements Statemethods {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
         for (int i = 0; i < buttons.length; i++) {
-
             LoginButton mb = buttons[i];
 
             if (isIn(e, mb) && mb.isMousePressed()) {
-
                 switch (i) {
-
                     case 0:
-                        // OLD ACCOUNT
                         if (UserAccounts.login()) {
                             try {
                                 game.getMenu().loadUserData();
@@ -130,16 +119,13 @@ public class Login extends State implements Statemethods {
                         break;
 
                     case 1:
-                        // NEW ACCOUNT 
                         UserAccounts.register();
                         break;
 
                     case 2:
-                        // QUIT
                         System.exit(0);
                         break;
                 }
-
                 break;
             }
         }
@@ -148,7 +134,6 @@ public class Login extends State implements Statemethods {
     }
 
     private void resetButton() {
-
         for (LoginButton mb : buttons) {
             mb.resetBools();
         }
@@ -156,13 +141,11 @@ public class Login extends State implements Statemethods {
 
     @Override
     public void mouseMoved(MouseEvent e) {
-
         for (LoginButton mb : buttons) {
             mb.setMouseOver(false);
         }
 
         for (LoginButton mb : buttons) {
-
             if (isIn(e, mb)) {
                 mb.setMouseOver(true);
                 break;
@@ -177,5 +160,4 @@ public class Login extends State implements Statemethods {
     @Override
     public void keyReleased(KeyEvent e) {
     }
-    
 }

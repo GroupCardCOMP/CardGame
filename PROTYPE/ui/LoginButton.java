@@ -1,3 +1,4 @@
+
 package ui;
 
 import gamestates.Gamestate;
@@ -15,8 +16,12 @@ public class LoginButton {
     private BufferedImage[] imgs;
     private boolean mouseOver, mousePressed;
     private Rectangle bounds;
+    private boolean themed;
 
-    public LoginButton(int xPos, int yPos, int rowIndex, Gamestate state) {
+    public LoginButton(
+        int xPos, int yPos, int rowIndex,
+        Gamestate state
+    ) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.rowIndex = rowIndex;
@@ -25,28 +30,80 @@ public class LoginButton {
         initBounds();
     }
 
+    public LoginButton(
+        int xPos, int yPos, int rowIndex,
+        Gamestate state, int width, int height
+    ) {
+        this.xPos = xPos;
+        this.yPos = yPos;
+        this.rowIndex = rowIndex;
+        this.state = state;
+        this.themed = true;
+        this.xOffsetCenter = width / 2;
+
+        this.bounds = new Rectangle(
+            xPos - width / 2, yPos, width, height
+        );
+
+        this.imgs = new BufferedImage[3];
+
+        imgs[0] = LoadSave.GetSpriteAtlas(
+            "res/login_button_" + rowIndex + ".png"
+        );
+
+        imgs[1] = LoadSave.GetSpriteAtlas(
+            "res/login_button_" + rowIndex + "_hover.png"
+        );
+
+        imgs[2] = LoadSave.GetSpriteAtlas(
+            "res/login_button_" + rowIndex + "_pressed.png"
+        );
+    }
+
     private void initBounds() {
-        bounds = new Rectangle(xPos - xOffsetCenter, yPos, B_WIDTH, B_HEIGHT);
+        bounds = new Rectangle(
+            xPos - xOffsetCenter,
+            yPos,
+            B_WIDTH,
+            B_HEIGHT
+        );
     }
 
     private void loadImgs() {
         imgs = new BufferedImage[3];
-        BufferedImage temp = LoadSave.GetSpriteAtlas(LoadSave.MenuButton);
-        for (int i = 0; i < imgs.length; i++) {
-            imgs[i] = temp.getSubimage(i * B_WIDTH_DEFAULT, rowIndex * B_HEIGHT_DEFAULT, B_WIDTH_DEFAULT, B_HEIGHT_DEFAULT);
-        }
 
+        BufferedImage temp = LoadSave.GetSpriteAtlas(
+            LoadSave.MenuButton
+        );
+
+        for (int i = 0; i < imgs.length; i++) {
+            imgs[i] = temp.getSubimage(
+                i * B_WIDTH_DEFAULT,
+                rowIndex * B_HEIGHT_DEFAULT,
+                B_WIDTH_DEFAULT,
+                B_HEIGHT_DEFAULT
+            );
+        }
     }
 
     public void draw(Graphics g) {
-        g.drawImage(imgs[index], xPos - xOffsetCenter, yPos,  B_WIDTH, B_HEIGHT, null);
+        g.drawImage(
+            imgs[index],
+            bounds.x,
+            bounds.y,
+            bounds.width,
+            bounds.height,
+            null
+        );
     }
+
     public void update() {
-        // Update the button state if needed
         index = 0;
+
         if (mouseOver) {
             index = 1;
         }
+
         if (mousePressed) {
             index = 2;
         }
@@ -55,12 +112,13 @@ public class LoginButton {
     public boolean isMouseOver() {
         return mouseOver;
     }
+
     public void setMouseOver(boolean mouseOver) {
         this.mouseOver = mouseOver;
     }
 
     public boolean isMousePressed() {
-        return mousePressed; 
+        return mousePressed;
     }
 
     public void setMousePressed(boolean mousePressed) {
@@ -75,10 +133,8 @@ public class LoginButton {
         Gamestate.state = state;
     }
 
-
     public void resetBools() {
         mouseOver = false;
         mousePressed = false;
     }
-
 }

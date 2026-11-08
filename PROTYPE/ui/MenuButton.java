@@ -1,3 +1,4 @@
+
 package ui;
 
 import gamestates.Gamestate;
@@ -7,16 +8,20 @@ import java.awt.image.BufferedImage;
 import static utilz.Constants.UI.Buttons.*;
 import utilz.LoadSave;
 
-
 public class MenuButton {
+
     private int xPos, yPos, rowIndex, index;
     private int xOffsetCenter = B_WIDTHX / 2;
     private Gamestate state;
     private BufferedImage[] imgs;
     private boolean mouseOver, mousePressed;
     private Rectangle bounds;
+    private boolean themed;
 
-    public MenuButton(int xPos, int yPos, int rowIndex, Gamestate state) {
+    public MenuButton(
+        int xPos, int yPos, int rowIndex,
+        Gamestate state
+    ) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.rowIndex = rowIndex;
@@ -25,28 +30,83 @@ public class MenuButton {
         initBounds();
     }
 
+    public MenuButton(
+        int xPos, int yPos, int rowIndex,
+        Gamestate state, int width, int height
+    ) {
+        this.xPos = xPos;
+        this.yPos = yPos;
+        this.rowIndex = rowIndex;
+        this.state = state;
+        this.themed = true;
+        this.xOffsetCenter = width / 2;
+
+        this.bounds = new Rectangle(
+            xPos - width / 2,
+            yPos,
+            width,
+            height
+        );
+
+        this.imgs = new BufferedImage[3];
+
+        imgs[0] = LoadSave.GetSpriteAtlas(
+            "res/menu_button_" + rowIndex + ".png"
+        );
+
+        imgs[1] = LoadSave.GetSpriteAtlas(
+            "res/menu_button_" + rowIndex + "_hover.png"
+        );
+
+        imgs[2] = LoadSave.GetSpriteAtlas(
+            "res/menu_button_" + rowIndex + "_pressed.png"
+        );
+    }
+
     private void initBounds() {
-        bounds = new Rectangle(xPos - xOffsetCenter, yPos, B_WIDTHX, B_HEIGHTX);
+        bounds = new Rectangle(
+            xPos - xOffsetCenter,
+            yPos,
+            B_WIDTHX,
+            B_HEIGHTX
+        );
     }
 
     private void loadImgs() {
         imgs = new BufferedImage[3];
-        BufferedImage temp = LoadSave.GetSpriteAtlas(LoadSave.AccMenuButton);
-        for (int i = 0; i < imgs.length; i++) {
-            imgs[i] = temp.getSubimage(i * B_WIDTH_DEFAULT, rowIndex * B_HEIGHT_DEFAULT, B_WIDTH_DEFAULT, B_HEIGHT_DEFAULT);
-        }
 
+        BufferedImage temp = LoadSave.GetSpriteAtlas(
+            LoadSave.AccMenuButton
+        );
+
+        for (int i = 0; i < imgs.length; i++) {
+            imgs[i] = temp.getSubimage(
+                i * B_WIDTH_DEFAULT,
+                rowIndex * B_HEIGHT_DEFAULT,
+                B_WIDTH_DEFAULT,
+                B_HEIGHT_DEFAULT
+            );
+        }
     }
 
     public void draw(Graphics g) {
-        g.drawImage(imgs[index], xPos - xOffsetCenter, yPos,  B_WIDTHX, B_HEIGHTX, null);
+        g.drawImage(
+            imgs[index],
+            bounds.x,
+            bounds.y,
+            bounds.width,
+            bounds.height,
+            null
+        );
     }
+
     public void update() {
-        // Update the button state if needed
         index = 0;
+
         if (mouseOver) {
             index = 1;
         }
+
         if (mousePressed) {
             index = 2;
         }
@@ -55,12 +115,13 @@ public class MenuButton {
     public boolean isMouseOver() {
         return mouseOver;
     }
+
     public void setMouseOver(boolean mouseOver) {
         this.mouseOver = mouseOver;
     }
 
     public boolean isMousePressed() {
-        return mousePressed; 
+        return mousePressed;
     }
 
     public void setMousePressed(boolean mousePressed) {
@@ -75,10 +136,8 @@ public class MenuButton {
         Gamestate.state = state;
     }
 
-
     public void resetBools() {
         mouseOver = false;
         mousePressed = false;
     }
-
 }
