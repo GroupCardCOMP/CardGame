@@ -39,7 +39,7 @@ public class Menu extends State implements Statemethods {
 
     private void loadButtons() {
 
-        int buttonInterval = (int) (56 * Game.SCALE);
+        int buttonInterval = (int) (42 * Game.SCALE);
         int buttonStartY = (int) (100 * Game.SCALE);
 
         buttons[0] = new MenuButton(

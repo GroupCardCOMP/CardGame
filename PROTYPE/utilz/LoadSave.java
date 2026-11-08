@@ -11,6 +11,8 @@ public class LoadSave {
     public static final String MenuBackground = "res/menu_background-2.png";
     public static final String AccMenuButton = "res/button_atlas.png";
     public static final String AccMenuBackground = "res/menu_BackGround.png";
+    public static final String backButton = "res/back_button.png";
+    public static final String ninebynine = "res/900x900.png";
 
     public static BufferedImage GetSpriteAtlas(String fileName) {
         BufferedImage img = null;

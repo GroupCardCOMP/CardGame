@@ -10,7 +10,7 @@ import utilz.LoadSave;
 
 public class MenuButton {
     private int xPos, yPos, rowIndex, index;
-    private int xOffsetCenter = B_WIDTH / 2;
+    private int xOffsetCenter = B_WIDTHX / 2;
     private Gamestate state;
     private BufferedImage[] imgs;
     private boolean mouseOver, mousePressed;
@@ -26,7 +26,7 @@ public class MenuButton {
     }
 
     private void initBounds() {
-        bounds = new Rectangle(xPos - xOffsetCenter, yPos, B_WIDTH, B_HEIGHT);
+        bounds = new Rectangle(xPos - xOffsetCenter, yPos, B_WIDTHX, B_HEIGHTX);
     }
 
     private void loadImgs() {
@@ -39,7 +39,7 @@ public class MenuButton {
     }
 
     public void draw(Graphics g) {
-        g.drawImage(imgs[index], xPos - xOffsetCenter, yPos,  B_WIDTH, B_HEIGHT, null);
+        g.drawImage(imgs[index], xPos - xOffsetCenter, yPos,  B_WIDTHX, B_HEIGHTX, null);
     }
     public void update() {
         // Update the button state if needed

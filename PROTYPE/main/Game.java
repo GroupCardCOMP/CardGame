@@ -1,10 +1,10 @@
 package main;
 
+import gamestates.Collection;
 import gamestates.Gamestate;
 import gamestates.Login;
 import gamestates.Menu;
 import java.awt.Graphics;
-
 
 public class Game implements Runnable {
 
@@ -16,11 +16,12 @@ public class Game implements Runnable {
 
     private Menu menu;
     private Login login;
+    private Collection collection;
 
 
     public final static int TILES_DEFAULT_SIZE = 32;
     public final static float SCALE = 2f;
-    public final static float SCALEX = 1f;
+    public final static float SCALEX = 1.3f;
     public final static int TILES_IN_WIDTH = 26;
     public final static int TILES_IN_HEIGHT = 14;
     public final static int TILES_SIZE = (int) (TILES_DEFAULT_SIZE * SCALE);
@@ -40,6 +41,7 @@ public class Game implements Runnable {
         private void initClasses() {
             login = new Login(this);
             menu = new Menu(this);
+            collection = new Collection(this);
         }
 
         private void startGameLoop() {
@@ -57,6 +59,15 @@ public class Game implements Runnable {
                     break;
                 case PLAYING:
                     // Update playing state
+                    break;
+                case STORE:
+                    // Update store state
+                    break;
+                case COLLECTION:
+                    collection.update();
+                    break;
+                case TRADE:
+                    // Update trade state
                     break;
                 case OPTIONS:
                     // Update options state
@@ -79,6 +90,18 @@ public class Game implements Runnable {
                     break;
                 case PLAYING:
                     // Render playing state
+                    break;
+                case STORE:
+                    // Render store state
+                    break;
+                case COLLECTION:
+                    collection.draw(g);
+                    break;
+                case TRADE:
+                    // Render trade state
+                    break;
+                case OPTIONS:
+                    // Render options state
                     break;
                 default:
                     // Render quit state
@@ -136,5 +159,9 @@ public class Game implements Runnable {
 
     public Menu getMenu() {
         return menu;
+    }
+
+    public Collection getCollection() {
+        return collection;
     }
 }
