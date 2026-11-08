@@ -1,11 +1,14 @@
 
 package gamestates;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import main.Game;
+import main.UserAccounts;
 import ui.MenuButton;
 import utilz.LoadSave;
 
@@ -16,12 +19,27 @@ public class Menu extends State implements Statemethods {
     private BufferedImage backgroundImg;
 
     private int menuX, menuY, menuWidth, menuHeight;
+    public String username;
+    public int coins;
+
 
     public Menu(Game game) {
         super(game);
-
+        
         loadButtons();
         loadBackground();
+        
+    }
+
+    public void loadUserData() throws IOException {
+        String loggedInUsername = UserAccounts.getCurrentUser();
+        if (loggedInUsername == null) {
+            throw new IllegalStateException("No user is logged in.");
+        }
+
+        int currentCoins = UserAccounts.getCoins(loggedInUsername);
+        username = loggedInUsername;
+        coins = currentCoins;
     }
 
     private void loadBackground() {
@@ -100,6 +118,10 @@ public class Menu extends State implements Statemethods {
         for (MenuButton mb : buttons) {
             mb.draw(g);
         }
+        g.setColor(Color.BLACK);
+        g.drawString("Coins: " + coins, menuWidth, 110);
+        g.drawString("player: " + username, (int) (menuWidth * 1.85), 110);
+
     }
 
     @Override

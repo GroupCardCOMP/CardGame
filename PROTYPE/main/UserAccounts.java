@@ -1,13 +1,14 @@
 
 package main;
 
+import java.awt.GridLayout;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.nio.file.StandardCopyOption;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -20,7 +21,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import java.awt.GridLayout;
 
 /** this is for local registration and account creation */
 public final class UserAccounts {
@@ -43,6 +43,7 @@ public final class UserAccounts {
     private static final int ITERATIONS = 120_000;
     private static final int KEY_LENGTH = 256;
     private static final SecureRandom RANDOM = new SecureRandom();
+    private static String currentUser = null;
 
     private UserAccounts() { }
 
@@ -185,6 +186,7 @@ public final class UserAccounts {
                 if (authenticated) {
                     showMessage("Login successful. Welcome, "
                             + fields[0] + "!");
+                    currentUser = username;
                     return true;
                 }
 
@@ -201,6 +203,10 @@ public final class UserAccounts {
         }
 
         return false;
+    }
+    /** Gets the current user's username. */
+    public static String getCurrentUser() {
+        return currentUser;
     }
 
     /** Gets the player's current coins. */

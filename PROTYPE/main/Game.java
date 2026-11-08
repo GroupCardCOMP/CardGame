@@ -164,4 +164,5 @@ public class Game implements Runnable {
     public Collection getCollection() {
         return collection;
     }
+
 }

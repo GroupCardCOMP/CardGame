@@ -4,8 +4,10 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import main.Game;
 import main.UserAccounts;
+import javax.swing.JOptionPane;
 import ui.MenuButton;
 import utilz.LoadSave;
 import ui.LoginButton;
@@ -112,7 +114,18 @@ public class Login extends State implements Statemethods {
                     case 0:
                         // OLD ACCOUNT
                         if (UserAccounts.login()) {
-                            Gamestate.state = Gamestate.MENU;
+                            try {
+                                game.getMenu().loadUserData();
+                                Gamestate.state = Gamestate.MENU;
+                            } catch (IOException ex) {
+                                JOptionPane.showMessageDialog(
+                                    null,
+                                    "Could not load account data: "
+                                        + ex.getMessage(),
+                                    "Account Error",
+                                    JOptionPane.ERROR_MESSAGE
+                                );
+                            }
                         }
                         break;
 
