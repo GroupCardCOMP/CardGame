@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import javax.swing.JOptionPane;
 import main.Game;
 import main.UserAccounts;
 import ui.MenuButton;
@@ -147,7 +148,19 @@ public class Menu extends State implements Statemethods {
             if (isIn(e, mb) && mb.isMousePressed()) {
                 switch (i) {
                     case 0:
-                        Gamestate.state = Gamestate.PLAYING;
+                        try {
+                            game.getPlaying().loadUserData();
+                            game.getPlaying().startGame();
+                            Gamestate.state = Gamestate.PLAYING;
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(
+                                null,
+                                "Could not load player data: "
+                                    + ex.getMessage(),
+                                "Game Error",
+                                JOptionPane.ERROR_MESSAGE
+                            );
+                        }
                         break;
 
                     case 1:
