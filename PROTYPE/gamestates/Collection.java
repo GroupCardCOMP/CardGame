@@ -6,6 +6,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import main.Game;
 import ui.BackButton;
+import ui.DisplayCollection;
 import utilz.LoadSave;
 
 
@@ -15,7 +16,9 @@ public class Collection extends State implements Statemethods{
 
         private BufferedImage backgroundImg;
 
-        private int menuX, menuY, menuWidth, menuHeight;
+        private DisplayCollection[] cards = new DisplayCollection[20];
+
+        private int X, Y, Width, Height;
 
         int rows = 5;
         int cols = 4;
@@ -34,11 +37,11 @@ public class Collection extends State implements Statemethods{
             LoadSave.ninebynine
         );
 
-        menuWidth = (int) (backgroundImg.getWidth() * 1f);
-        menuHeight = (int) (backgroundImg.getHeight() * 1f);
+        Width = (int) (backgroundImg.getWidth() * 1f);
+        Height = (int) (backgroundImg.getHeight() * 1f);
 
-        menuX = Game.GAME_WIDTH / 2 - menuWidth / 2;
-        menuY = (int) (0 * Game.SCALE);
+        X = Game.GAME_WIDTH / 2 - Width / 2;
+        Y = (int) (0 * Game.SCALE);
     }
 
     private void loadButtons() {
@@ -47,6 +50,18 @@ public class Collection extends State implements Statemethods{
              (int) (10 * Game.SCALEX),
             0, Gamestate.MENU
         );
+        
+        //change these numbers depending on what fits in panel
+        int c=307; //starting x value for cards
+        int r=150; //starting y value for cards
+        for (int i=0; i<20;i++) { 
+            c = (c +175); //how much space to add, also increase start position
+            if(i%5==0 && i!=0){
+                c=482; //start of a row, starting x + 175
+                r=r+100;
+            }
+            cards[i] = new DisplayCollection(c, r, 0); //creates a card 
+        }
     }
 
     @Override
@@ -61,13 +76,17 @@ public class Collection extends State implements Statemethods{
     public void draw(Graphics g) {
         g.drawImage(
             backgroundImg,
-            menuX, menuY,
-            menuWidth, menuHeight,
+            X, Y,
+            Width, Height,
             null
         );
 
         for (BackButton mb : backButton) {
             mb.draw(g);
+        }
+
+        for (DisplayCollection c : cards){
+            c.draw(g);
         }
 
         

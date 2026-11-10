@@ -5,6 +5,8 @@ import gamestates.Gamestate;
 import gamestates.Login;
 import gamestates.Menu;
 import gamestates.Playing;
+import gamestates.Store;
+import gamestates.Trading;
 import java.awt.Graphics;
 
 public class Game implements Runnable {
@@ -19,6 +21,8 @@ public class Game implements Runnable {
     private Login login;
     private Collection collection;
     private Playing playing;
+    private Trading trade;
+    private Store store;
 
 
     public final static int TILES_DEFAULT_SIZE = 32;
@@ -45,6 +49,8 @@ public class Game implements Runnable {
             menu = new Menu(this);
             collection = new Collection(this);
             playing = new Playing(this);
+            trade = new Trading(this);
+            store = new Store(this);
         }
 
         private void startGameLoop() {
@@ -64,13 +70,13 @@ public class Game implements Runnable {
                     playing.update();
                     break;
                 case STORE:
-                    // Update store state
+                    store.update();
                     break;
                 case COLLECTION:
                     collection.update();
                     break;
                 case TRADE:
-                    // Update trade state
+                    trade.update();
                     break;
                 case OPTIONS:
                     // Update options state
@@ -95,13 +101,13 @@ public class Game implements Runnable {
                     playing.draw(g);
                     break;
                 case STORE:
-                    // Render store state
+                    store.draw(g);
                     break;
                 case COLLECTION:
                     collection.draw(g);
                     break;
                 case TRADE:
-                    // Render trade state
+                    trade.draw(g);
                     break;
                 case OPTIONS:
                     // Render options state
@@ -172,4 +178,11 @@ public class Game implements Runnable {
         return playing;
     }
 
+    public Trading getTrading() {
+        return trade;
+    }
+
+    public Store getStore(){
+        return store;
+    }
 }
