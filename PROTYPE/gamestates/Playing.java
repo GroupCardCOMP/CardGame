@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -15,6 +16,7 @@ import java.util.Random;
 import main.Game;
 import main.UserAccounts;
 import ui.BackButton;
+import ui.CardUI;
 import utilz.LoadSave;
 
 public class Playing extends State implements Statemethods {
@@ -24,6 +26,10 @@ public class Playing extends State implements Statemethods {
     private BufferedImage backgroundImg;
 
     private int menuX, menuY, menuWidth, menuHeight;
+
+    private final Rectangle nextButton = new Rectangle(Game.GAME_WIDTH - 200,
+         Game.GAME_HEIGHT - 100, 140, 50);
+    private boolean nextButtonPressed;
 
     public String username;
     private int coins;
@@ -51,6 +57,14 @@ public class Playing extends State implements Statemethods {
     public int[] playerOneHand = {0, 0, 0, 0};
     public int[] botHand = {0, 0, 0, 0};
 
+    public List<Integer> applyPlayerHand = new ArrayList<>();
+    public List<Integer> transPlayerHand = new ArrayList<>();
+    public List<Integer> PlayerHand = new ArrayList<>();
+
+    public int[] CardsNum = {0 ,0, 0, 0};
+
+    private final CardUI cardui;
+
 
     public int[] DealerDraw(int[] dealerdraw ) {
         int[] dealerDraw = {0, 1, 2, 3};
@@ -73,28 +87,66 @@ public class Playing extends State implements Statemethods {
     return botdraw;
     }
     
-    public int[] PlayerDraw (int[] playerdraw) {
-       List<Integer> availableCards = new ArrayList<>();
+    public int[] PlayerDraw(int[] playerdraw) {
+        Arrays.fill(playerdraw, -1);
+        List<Integer> availableCards = new ArrayList<>();
 
-    for (int cardId = 0; cardId < playerCards.length; cardId++) {
-        if (playerCards[cardId] == 1) {
-            int copies = 1 + playerDuplicates[cardId]; // owned card + duplicates
+        for (int cardId = 0; cardId < playerCards.length; cardId++) {
+            if (playerCards[cardId] == 1) {
+                int copies = 1 + playerDuplicates[cardId];
 
-            for (int copy = 0; copy < copies; copy++) {
-                availableCards.add(cardId);
+                for (int copy = 0; copy < copies; copy++) {
+                    availableCards.add(cardId);
+                }
+            }
+        }
+
+        Random random = new Random();
+
+        for (int i = 0; i < playerdraw.length && !availableCards.isEmpty(); i++) {
+            int randomIndex = random.nextInt(availableCards.size());
+            playerdraw[i] = availableCards.remove(randomIndex);
+        }
+
+        return playerdraw;
+    }
+
+    public void Deal() {
+        DealerDraw(dealersHand);
+        BotDraw(botHand);
+        PlayerDraw(playerOneHand);
+        Evalute();
+    }
+
+    public void Evalute() {
+        List<Integer> tempPlayerList = new ArrayList<>(playerOneHand.length);
+
+        for (int card : playerOneHand) {
+            if (card >= 0) {
+                tempPlayerList.add(card);
+            }
+        }
+
+        Arrays.fill(CardsNum, 0);
+        applyPlayerHand.clear();
+        transPlayerHand.clear();
+        PlayerHand.clear();
+
+        for (int i = 0; i < dealersHand.length; i++) {
+            int rank = dealersHand[i];
+            if (rank >= 0 && rank < CardsNum.length) {
+                CardsNum[rank]++;
+            }
+        }
+
+        for (int rank = 0; rank < CardsNum.length; rank++) {
+            if (CardsNum[rank] > 0) {
+                cardui.CardActions(rank, CardsNum[rank], tempPlayerList);
             }
         }
     }
 
-    Random random = new Random();
 
-    for (int i = 0; i < playerdraw.length && !availableCards.isEmpty(); i++) {
-        int randomIndex = random.nextInt(availableCards.size());
-        playerdraw[i] = availableCards.remove(randomIndex);
-    }
-
-    return playerdraw;
-    }
 
 
     
@@ -102,16 +154,14 @@ public class Playing extends State implements Statemethods {
 
     public Playing(Game game) {
         super(game);
-        
-    loadButtons();
-    loadBackground();
+        cardui = new CardUI(this);
+        loadButtons();
+        loadBackground();
     }
 
     public void startGame() {
-        DealerDraw(dealersHand);
-        BotDraw(botHand);
-        PlayerDraw(playerOneHand);
-        }
+        Deal();
+    }
 
     public void loadUserData() throws IOException {
         String loggedInUsername =
@@ -187,32 +237,43 @@ public class Playing extends State implements Statemethods {
         int middleX = (int) (Game.GAME_WIDTH / 2);
         int middleY = (int) (Game.GAME_HEIGHT / 2);
         String DealerArrayToText = Arrays.toString(dealersHand);
+        String PlayerUsedCard = applyPlayerHand.toString();
+        String PlayerHandTrans = transPlayerHand.toString();
+        String ActualHandused = PlayerHand.toString();
 
         String PlayerText = "player: " + (username == null ? "" : username);
         String DealerText = "dealerhand [" + DealerArrayToText + "]";
         String PlayerArrayToText = Arrays.toString(playerOneHand);
         String BotArrayToText = Arrays.toString(botHand);
-        String PhealtString = (username == null ? "" : username) + "health: " + PlayerOneHealth;
+        String PhealtString = (username == null ? "" : username) + " health: " + PlayerOneHealth;
         String bothealthStr = "bot health: " + botHealth;
         String playerShieldString = "Player shield: " + PlayerOneSh;
         String BotShieldString = "bot shield: " + botShield;
         String playerAttackString = "player damage output: " + PlayerOneAttack;
         String botAttackString = "bot damage output: " + BotAttack;
-
+        String ApplyPlayerHand = "applys cards used: " + PlayerUsedCard;
+        String ApplyPlayerTrans = "matching rank: " + PlayerHandTrans;
+        String ApplyActualHand = "actual card used: " + ActualHandused;
 
         g.drawString(DealerText, middleX, middleY);
 
-        g.drawString(playerAttackString, middleX, middleY + 150);
-        g.drawString(PlayerText, middleX, middleY + 200);
-        g.drawString(PlayerArrayToText, middleX, middleY + 250);
-        g.drawString(playerShieldString, middleX, middleY + 300);
-        g.drawString(PhealtString, middleX, middleY + 350);
+        g.drawString(playerAttackString, middleX, middleY + 100);
+        g.drawString(PlayerText, middleX, middleY + 150);
+        g.drawString(PlayerArrayToText, middleX, middleY + 200);
+        g.drawString(ApplyActualHand, middleX, middleY + 250);
+        g.drawString(ApplyPlayerHand, middleX, middleY + 300);
+        g.drawString(ApplyPlayerTrans, middleX, middleY + 350);
+        g.drawString(playerShieldString, middleX, middleY + 400);
+        g.drawString(PhealtString, middleX, middleY + 430);
 
         g.drawString(botAttackString, middleX, middleY - 150);
         g.drawString("bot", middleX, middleY - 200);
         g.drawString(BotArrayToText, middleX, middleY - 250);
         g.drawString(BotShieldString, middleX, middleY - 300);
         g.drawString(bothealthStr, middleX, middleY - 350);
+
+        g.drawRect(nextButton.x, nextButton.y, nextButton.width, nextButton.height);
+        g.drawString("Next", nextButton.x + 45, nextButton.y + 30);
 
     }
 
@@ -223,7 +284,8 @@ public class Playing extends State implements Statemethods {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        
+        nextButtonPressed = nextButton.contains(e.getPoint());
+
         for (BackButton mb : backButton) {
             if (isIn(e, mb)) {
                 mb.setMousePressed(true);
@@ -250,9 +312,11 @@ public class Playing extends State implements Statemethods {
             }
         }
 
-        
-            resetButtons();
-        
+        if (nextButtonPressed && nextButton.contains(e.getPoint())) {
+            Deal();
+        }
+        nextButtonPressed = false;
+        resetButtons();
     }
 
     private void resetButtons() {
