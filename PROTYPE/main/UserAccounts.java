@@ -1,4 +1,3 @@
-
 package main;
 
 import java.awt.GridLayout;
@@ -204,9 +203,45 @@ public final class UserAccounts {
 
         return false;
     }
+
     /** Gets the current user's username. */
     public static String getCurrentUser() {
         return currentUser;
+    }
+
+    /** Purchases four independent random cards from the bot's 19-card pool. */
+    public static synchronized int[] buyCardPack(String username, int price)
+            throws IOException {
+        List<String> lines = readAccount(username);
+        int coins = Integer.parseInt(lines.get(1));
+        if (coins < price) {
+            throw new IllegalStateException("Not enough coins.");
+        }
+        int[] cards = parseArray(lines.get(2));
+        int[] duplicates = parseArray(lines.get(3));
+        int[] received = new int[4];
+
+        for (int i = 0; i < received.length; i++) {
+            // Same range and replacement behavior as Playing.BotDraw().
+            int card = RANDOM.nextInt(19);
+            received[i] = card;
+
+            if (cards[card] == 0) {
+                cards[card] = 1;
+            } else if (duplicates[card] < 9) {
+                duplicates[card]++;
+            } else {
+                // Saved duplicate counts have a maximum of nine.
+                throw new IllegalStateException("Card #" + (card + 1)
+                        + " has reached the duplicate limit.");
+            }
+        }
+
+        lines.set(1, Integer.toString(coins - price));
+        lines.set(2, encodeArray(cards));
+        lines.set(3, encodeArray(duplicates));
+        writeAccount(accountFile(username), lines);
+        return received;
     }
 
     /** Gets the player's current coins. */
