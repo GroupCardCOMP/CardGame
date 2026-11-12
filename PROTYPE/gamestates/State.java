@@ -5,6 +5,7 @@ import main.Game;
 import ui.BackButton;
 import ui.LoginButton;
 import ui.MenuButton;
+import ui.StartTrade;
 
 public class State {
 
@@ -21,6 +22,9 @@ public class State {
         return mb.getBounds().contains(e.getX(), e.getY());
     }
     public boolean isIn(MouseEvent e, BackButton mb) {
+        return mb.getBounds().contains(e.getX(), e.getY());
+    }
+    public boolean isIn(MouseEvent e, StartTrade mb) {
         return mb.getBounds().contains(e.getX(), e.getY());
     }
    
