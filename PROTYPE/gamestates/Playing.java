@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import javax.swing.JOptionPane;
 import main.Game;
 import main.UserAccounts;
 import ui.BackButton;
@@ -20,6 +21,11 @@ import ui.CardUI;
 import utilz.LoadSave;
 
 public class Playing extends State implements Statemethods {
+
+    private enum Stages {
+        DEALER_DRAW, BOTH_DRAW, EVALUATE, APPLY_EFFECTS, RESET, GAME_OVER
+    }
+    private Stages stage = Stages.DEALER_DRAW;
     
     private BackButton[] backButton = new BackButton[1];
 
@@ -40,15 +46,21 @@ public class Playing extends State implements Statemethods {
 
     private int[] botplayerCards = new int[19];
 
-    private int health = 100;
+    private final int health = 100;
     public int PlayerOneHealth = health;
     public int botHealth = health;
-    
+
+    public int PlayerHeart = 0;
+    public int BotHeart = 0;
+
+    public int PlayerClubs = 0;
+    public int BotClubs = 0;
+
     public int PlayerOneSh = 0;
     public int botShield = 0;
 
-    public int PlayerOneAttack;
-    public int BotAttack;
+    public int PlayerOneAttack = 0;
+    public int BotAttack = 0;
 
     final private int winCoins = 50;
 
@@ -60,6 +72,10 @@ public class Playing extends State implements Statemethods {
     public List<Integer> applyPlayerHand = new ArrayList<>();
     public List<Integer> transPlayerHand = new ArrayList<>();
     public List<Integer> PlayerHand = new ArrayList<>();
+
+    public List<Integer> applyBotHand = new ArrayList<>();
+    public List<Integer> transBotHand = new ArrayList<>();
+    public List<Integer> BotHandAct = new ArrayList<>();
 
     public int[] CardsNum = {0 ,0, 0, 0};
 
@@ -113,17 +129,21 @@ public class Playing extends State implements Statemethods {
 
     public void Deal() {
         DealerDraw(dealersHand);
-        BotDraw(botHand);
-        PlayerDraw(playerOneHand);
-        Evalute();
+        
     }
 
     public void Evalute() {
         List<Integer> tempPlayerList = new ArrayList<>(playerOneHand.length);
+        List<Integer> tempBotList = new ArrayList<>(botHand.length);
 
         for (int card : playerOneHand) {
             if (card >= 0) {
                 tempPlayerList.add(card);
+            }
+        }
+        for (int card : botHand) {
+            if (card >= 0) {
+                tempBotList.add(card);
             }
         }
 
@@ -131,6 +151,10 @@ public class Playing extends State implements Statemethods {
         applyPlayerHand.clear();
         transPlayerHand.clear();
         PlayerHand.clear();
+
+        applyBotHand.clear();
+        transBotHand.clear();
+        BotHandAct.clear();
 
         for (int i = 0; i < dealersHand.length; i++) {
             int rank = dealersHand[i];
@@ -142,15 +166,197 @@ public class Playing extends State implements Statemethods {
         for (int rank = 0; rank < CardsNum.length; rank++) {
             if (CardsNum[rank] > 0) {
                 cardui.CardActions(rank, CardsNum[rank], tempPlayerList);
+                cardui.CardActionsBot(rank, CardsNum[rank], tempBotList);
             }
         }
     }
 
+    public void applyAllEffects(){
+        applyPlayerEffects();
+        applyBotEffects();
+        int playerDamage = Math.max(0, BotAttack - PlayerOneSh);
+        PlayerOneSh = Math.max(0, PlayerOneSh - BotAttack);
+        PlayerOneHealth = Math.max(0, PlayerOneHealth - playerDamage);
+
+        int botDamage = Math.max(0, PlayerOneAttack - botShield);
+        botShield = Math.max(0, botShield - PlayerOneAttack);
+        botHealth = Math.max(0, botHealth - botDamage);
+
+    }
+
+    public void applyPlayerEffects (){
+        int healthToRestore = 0;
+        boolean hasHeartEffect = false;
+
+        for (int i = 0; i < transPlayerHand.size(); i++) {
+            int amount = applyPlayerHand.get(i);
+            switch (transPlayerHand.get(i)) {
+                case 1:
+                    PlayerHeart += amount;
+                    healthToRestore += amount;
+                    hasHeartEffect = true;
+                    break;
+                case 2:
+                    PlayerOneSh += amount;
+                    break;
+                case 3:
+                    PlayerOneAttack += amount;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        for (int i = 0; i < transPlayerHand.size(); i++) {
+            if (transPlayerHand.get(i) != 0) {
+                continue;
+            }
+
+            int amount = applyPlayerHand.get(i);
+            PlayerClubs += amount;
+            if (PlayerHeart != 0) {
+                PlayerHeart += amount;
+                if (hasHeartEffect) {
+                    healthToRestore += amount;
+                }
+            }
+            if (PlayerOneSh != 0) {
+                PlayerOneSh += amount;
+            }
+            if (PlayerOneAttack != 0) {
+                PlayerOneAttack += amount;
+            }
+        }
+
+        PlayerOneHealth = Math.min(health, PlayerOneHealth + healthToRestore);
+
+        }
 
 
+    public void applyBotEffects(){
+        int healthToRestore = 0;
+        boolean hasHeartEffect = false;
 
-    
+        for (int i = 0; i < transBotHand.size(); i++) {
+            int amount = applyBotHand.get(i);
+            switch (transBotHand.get(i)) {
+                case 1:
+                    BotHeart += amount;
+                    healthToRestore += amount;
+                    hasHeartEffect = true;
+                    break;
+                case 2:
+                    botShield += amount;
+                    break;
+                case 3:
+                    BotAttack += amount;
+                    break;
+                default:
+                    break;
+            }
+        }
 
+        for (int i = 0; i < transBotHand.size(); i++) {
+            if (transBotHand.get(i) != 0) {
+                continue;
+            }
+
+            int amount = applyBotHand.get(i);
+            BotClubs += amount;
+            if (BotHeart != 0) {
+                BotHeart += amount;
+                if (hasHeartEffect) {
+                    healthToRestore += amount;
+                }
+            }
+            if (botShield != 0) {
+                botShield += amount;
+            }
+            if (BotAttack != 0) {
+                BotAttack += amount;
+            }
+        }
+
+        botHealth = Math.min(health, botHealth + healthToRestore);
+
+    }
+
+    public void resetAll() {
+        Arrays.fill(dealersHand, 0);
+        Arrays.fill(botHand, 0);
+        Arrays.fill(playerOneHand, 0);
+        Arrays.fill(CardsNum, 0);
+        applyPlayerHand.clear();
+        transPlayerHand.clear();
+        PlayerHand.clear();
+        applyBotHand.clear();
+        transBotHand.clear();
+        BotHandAct.clear();
+        botShield = 0;
+        PlayerOneSh = 0;
+        BotAttack = 0;
+        BotAttack = 0;
+        PlayerOneAttack = 0;
+        BotHeart = 0;
+        PlayerHeart = 0;
+        BotClubs = 0;
+        PlayerClubs = 0;
+    }
+
+    public void finishGame() {
+        if (PlayerOneHealth > 0 && botHealth <= 0) {
+            try {
+                coins += winCoins;
+                UserAccounts.updateCoins(username, coins);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(
+                    null,
+                    "Could not save your coin reward: " + ex.getMessage(),
+                    "Game Error",
+                    JOptionPane.ERROR_MESSAGE
+                );
+            }
+        } else if (botHealth > 0) {
+            // loser
+        }else {
+            // draw
+        }
+    }
+
+    public void gameSwitch() {
+        switch (stage) {
+            case DEALER_DRAW:
+                DealerDraw(dealersHand);
+                stage = Stages.BOTH_DRAW;
+                break;
+            case BOTH_DRAW:
+                BotDraw(botHand);
+                PlayerDraw(playerOneHand);
+                stage = Stages.EVALUATE;
+                break;
+            case EVALUATE:
+                Evalute();
+                stage = Stages.APPLY_EFFECTS;
+                break;
+            case APPLY_EFFECTS:
+                applyAllEffects();
+                if(PlayerOneHealth <= 0 || botHealth <= 0) {
+                    finishGame();
+                }else {
+                    stage = Stages.RESET;
+                }
+                break;
+            case RESET:
+                resetAll();
+                stage = Stages.DEALER_DRAW;
+                break;
+            case GAME_OVER:
+                break;
+            default:
+                throw new IllegalStateException("dont know what stage" + stage);
+        }
+
+    }
 
     public Playing(Game game) {
         super(game);
@@ -160,7 +366,8 @@ public class Playing extends State implements Statemethods {
     }
 
     public void startGame() {
-        Deal();
+       resetAll();
+       stage = Stages.DEALER_DRAW;
     }
 
     public void loadUserData() throws IOException {
@@ -241,6 +448,10 @@ public class Playing extends State implements Statemethods {
         String PlayerHandTrans = transPlayerHand.toString();
         String ActualHandused = PlayerHand.toString();
 
+        String BotUsedCard = applyBotHand.toString();
+        String BotHandtransl = transBotHand.toString();
+        String ActualBotHand = BotHandAct.toString();
+
         String PlayerText = "player: " + (username == null ? "" : username);
         String DealerText = "dealerhand [" + DealerArrayToText + "]";
         String PlayerArrayToText = Arrays.toString(playerOneHand);
@@ -266,11 +477,14 @@ public class Playing extends State implements Statemethods {
         g.drawString(playerShieldString, middleX, middleY + 400);
         g.drawString(PhealtString, middleX, middleY + 430);
 
-        g.drawString(botAttackString, middleX, middleY - 150);
-        g.drawString("bot", middleX, middleY - 200);
-        g.drawString(BotArrayToText, middleX, middleY - 250);
-        g.drawString(BotShieldString, middleX, middleY - 300);
-        g.drawString(bothealthStr, middleX, middleY - 350);
+        g.drawString(botAttackString, middleX, middleY - 100);
+        g.drawString("bot", middleX, middleY - 150);
+        g.drawString(BotArrayToText, middleX, middleY - 200);
+        g.drawString("bot actual cards used: " + ActualBotHand, middleX, middleY - 250);
+        g.drawString("bot applys cards used: " + BotUsedCard, middleX, middleY - 300);
+        g.drawString("matching rank: " + BotHandtransl, middleX, middleY - 350);
+        g.drawString(BotShieldString, middleX, middleY - 400);
+        g.drawString(bothealthStr, middleX, middleY - 430);
 
         g.drawRect(nextButton.x, nextButton.y, nextButton.width, nextButton.height);
         g.drawString("Next", nextButton.x + 45, nextButton.y + 30);
@@ -313,7 +527,7 @@ public class Playing extends State implements Statemethods {
         }
 
         if (nextButtonPressed && nextButton.contains(e.getPoint())) {
-            Deal();
+            gameSwitch();
         }
         nextButtonPressed = false;
         resetButtons();
@@ -349,7 +563,5 @@ public class Playing extends State implements Statemethods {
     public void keyReleased(KeyEvent e) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
-
 
 }

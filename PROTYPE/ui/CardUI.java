@@ -47,6 +47,54 @@ public class CardUI {
         }
     }
 
+    public void CardActionsBot(int rank, int cardNum, List<Integer> PlayCards){
+        switch (rank) {
+            case 0:
+                findBotCards(cardNum, PlayCards, clubsArray, clubsAdd);
+                break;
+            case 1:
+                findBotCards(cardNum, PlayCards, heartsArray, heartAdd);
+                break;
+            case 2:
+                findBotCards(cardNum, PlayCards, diamondsArray, diamondAdd);
+                break;
+            case 3:
+                findBotCards(cardNum, PlayCards, spadesArray, spadeAdd);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid card rank: " + rank);
+        }
+    }
+
+    public void findBotCards(int cardNum, 
+        List<Integer> botsCards, 
+        int[] cardsUsed, 
+        int[] cardsUseApplied
+    ){
+        int cardsToFind = cardNum;
+
+        for (int i = 0; i < botsCards.size() && cardsToFind > 0;) {
+            int cardId = botsCards.get(i);
+            int matchingIndex = -1;
+
+            for (int j = 0;j <  cardsUsed.length; j++) {
+                if (cardsUsed[j] == cardId) {
+                    matchingIndex = j;
+                    break;
+                }
+            }
+            if(matchingIndex < 0) {
+                i++;
+                continue;
+            }
+            playing.applyBotHand.add(cardsUseApplied[matchingIndex]);
+            playing.transBotHand.add(cardsUsed[0]);
+            playing.BotHandAct.add(cardId);
+            botsCards.remove(i);
+            cardsToFind--;
+        }
+    }
+
     public void findPlayercards(
         int cardNum,
         List<Integer> playersCards,
