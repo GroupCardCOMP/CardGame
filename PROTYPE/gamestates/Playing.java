@@ -16,7 +16,6 @@ import java.util.Random;
 import javax.swing.JOptionPane;
 import main.Game;
 import main.UserAccounts;
-import ui.BackButton;
 import ui.CardUI;
 import utilz.LoadSave;
 
@@ -26,8 +25,6 @@ public class Playing extends State implements Statemethods {
         DEALER_DRAW, BOTH_DRAW, EVALUATE, APPLY_EFFECTS, RESET, GAME_OVER
     }
     private Stages stage = Stages.DEALER_DRAW;
-    
-    private BackButton[] backButton = new BackButton[1];
 
     private BufferedImage backgroundImg;
 
@@ -45,6 +42,11 @@ public class Playing extends State implements Statemethods {
     public int[] playerDuplicates;
 
     private int[] botplayerCards = new int[19];
+    private int[] botEasy = new int[3];
+    private int[] botMed = {4, 5, 6, 7, 8, 9, 10, 11};
+    private int[] botHard = {12, 13, 14, 15, 16, 17, 18, 19};
+
+    int[][] botDiff = { BotDraw(botplayerCards), easyBotDraw(botEasy)};
 
     private final int health = 100;
     public int PlayerOneHealth = health;
@@ -102,6 +104,38 @@ public class Playing extends State implements Statemethods {
         }
     return botdraw;
     }
+
+    public int[] easyBotDraw(int[] botdraw) {
+        Random random = new Random();
+
+        for (int i = 0; i < botdraw.length; i++) {
+            botdraw[i] = random.nextInt(botEasy.length);
+        }
+
+        return botdraw;
+    }
+
+    public int[] mediumBotDraw(int[] botdraw){
+        Random random = new Random();
+
+        for(int i = 0; i < botdraw.length; i++) {
+            int randomIndex = random.nextInt(botMed.length);
+            botdraw[i] = botMed[randomIndex];
+        }
+        return botdraw;
+    }
+
+    public int[] hardBotDraw(int[] botdraw){
+        Random random = new Random();
+
+        for(int i = 0; i < botdraw.length; i++) {
+            int randomIndex = random.nextInt(botHard.length);
+            botdraw[i] = botHard[randomIndex];
+        }
+        
+        return botdraw;
+    }
+    
     
     public int[] PlayerDraw(int[] playerdraw) {
         Arrays.fill(playerdraw, -1);
@@ -308,6 +342,7 @@ public class Playing extends State implements Statemethods {
             try {
                 coins += winCoins;
                 UserAccounts.updateCoins(username, coins);
+                JOptionPane.showMessageDialog(null, "you win");
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(
                     null,
@@ -318,9 +353,11 @@ public class Playing extends State implements Statemethods {
             }
         } else if (botHealth > 0) {
             // loser
+            JOptionPane.showMessageDialog(null, "you lose");
         }else {
             // draw
         }
+        Gamestate.state = Gamestate.GAMEOVER;
     }
 
     public void gameSwitch() {
@@ -351,6 +388,8 @@ public class Playing extends State implements Statemethods {
                 stage = Stages.DEALER_DRAW;
                 break;
             case GAME_OVER:
+                finishGame();
+                stage = Stages.GAME_OVER;
                 break;
             default:
                 throw new IllegalStateException("dont know what stage" + stage);
@@ -361,11 +400,12 @@ public class Playing extends State implements Statemethods {
     public Playing(Game game) {
         super(game);
         cardui = new CardUI(this);
-        loadButtons();
         loadBackground();
     }
 
     public void startGame() {
+        PlayerOneHealth = health;
+        botHealth = health;
        resetAll();
        stage = Stages.DEALER_DRAW;
     }
@@ -407,20 +447,12 @@ public class Playing extends State implements Statemethods {
         menuY = (int) (0 * Game.SCALE);
     }
 
-    private void loadButtons() {
-        backButton[0] = new BackButton(
-            65,
-             (int) (10 * Game.SCALEX),
-            0, Gamestate.MENU
-        );
+    public void loadCards() {
+
     }
 
     @Override
     public void update() {
-        
-       for (BackButton mb : backButton) {
-            mb.update();
-        }
     }
 
     @Override
@@ -431,10 +463,6 @@ public class Playing extends State implements Statemethods {
             menuWidth, menuHeight,
             null
         );
-
-        for (BackButton mb : backButton) {
-            mb.draw(g);
-        }
 
         g.setColor(Color.black);
         g.setFont(new Font(Font.MONOSPACED, Font.BOLD, Math.max(12, Game.GAME_HEIGHT / 48)));
@@ -499,59 +527,18 @@ public class Playing extends State implements Statemethods {
     @Override
     public void mousePressed(MouseEvent e) {
         nextButtonPressed = nextButton.contains(e.getPoint());
-
-        for (BackButton mb : backButton) {
-            if (isIn(e, mb)) {
-                mb.setMousePressed(true);
-                break;
-            }
-        }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-       for (int i = 0; i < backButton.length; i++) {
-
-            BackButton mb = backButton[i];
-
-            if (isIn(e, mb)) {
-                if (mb.isMousePressed()) {
-                    switch (i) {
-                        case 0:
-                            Gamestate.state = Gamestate.MENU;
-                            break;
-                    }
-                }
-                break;
-            }
-        }
-
         if (nextButtonPressed && nextButton.contains(e.getPoint())) {
             gameSwitch();
         }
         nextButtonPressed = false;
-        resetButtons();
-    }
-
-    private void resetButtons() {
-        for (BackButton mb : backButton) {
-            mb.resetBools();
-        }
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        for (BackButton mb : backButton) {
-            mb.setMouseOver(false);
-        }
-
-        for (BackButton mb : backButton) {
-
-            if (isIn(e, mb)) {
-                mb.setMouseOver(true);
-                break;
-            }
-        }
     }
 
     @Override

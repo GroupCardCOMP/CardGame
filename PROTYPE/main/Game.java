@@ -2,6 +2,7 @@ package main;
 
 import gamestates.Collection;
 import gamestates.Gamestate;
+import gamestates.GameOver;
 import gamestates.Login;
 import gamestates.Menu;
 import gamestates.Playing;
@@ -21,6 +22,7 @@ public class Game implements Runnable {
     private Login login;
     private Collection collection;
     private Playing playing;
+    private GameOver gameOver;
     private Trading trade;
     private Store store;
 
@@ -49,6 +51,7 @@ public class Game implements Runnable {
             menu = new Menu(this);
             collection = new Collection(this);
             playing = new Playing(this);
+            gameOver = new GameOver(this);
             trade = new Trading(this);
             store = new Store(this);
         }
@@ -68,6 +71,9 @@ public class Game implements Runnable {
                     break;
                 case PLAYING:
                     playing.update();
+                    break;
+                case GAMEOVER:
+                    gameOver.update();
                     break;
                 case STORE:
                     store.update();
@@ -99,6 +105,9 @@ public class Game implements Runnable {
                     break;
                 case PLAYING:
                     playing.draw(g);
+                    break;
+                case GAMEOVER:
+                    gameOver.draw(g);
                     break;
                 case STORE:
                     store.draw(g);
@@ -176,6 +185,10 @@ public class Game implements Runnable {
 
     public Playing getPlaying() {
         return playing;
+    }
+
+    public GameOver getGameOver() {
+        return gameOver;
     }
 
     public Trading getTrading() {

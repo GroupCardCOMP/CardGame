@@ -66,7 +66,7 @@ public class Trading extends State implements Statemethods{
             cards[i] = new DisplayCollection(c, r, 0); //creates a card 
         }
 
-        trade[0]= new StartTrade(832, 600, 0, Gamestate.TRADESERVER);//i dont know if this gamestate is needed
+        //trade[0]= new StartTrade(832, 600, 0, Gamestate.TRADESERVER);//i dont know if this gamestate is needed
     }
 
     @Override

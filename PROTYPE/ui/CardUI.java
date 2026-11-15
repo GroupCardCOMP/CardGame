@@ -18,7 +18,7 @@ public class CardUI {
     public int[] clubsArray = {0, 4, 8, 12, 16};
     public int[] clubsAdd = {1, 2, 3, 4, 5};
     public int[] heartsArray = {1, 5, 9, 13, 17};
-    public int[] heartAdd = {5, 10, 15, 20, 25};
+    public int[] heartAdd = {1, 2, 3, 4, 5};
     public int[] diamondsArray = {2, 6, 10, 14, 18};
     public int[] diamondAdd = {5, 10, 15, 20 , 25};
     public int[] spadesArray = {3, 7, 11, 15, 19};
@@ -133,6 +133,9 @@ public class CardUI {
     }
 
     public void draw(Graphics g) {
+        if(playing.PlayerHand != null ) {
+        
+        }
 
     }
 
