@@ -367,7 +367,7 @@ public class Playing extends State implements Statemethods {
                 stage = Stages.BOTH_DRAW;
                 break;
             case BOTH_DRAW:
-                BotDraw(botHand);
+                hardBotDraw(botHand);
                 PlayerDraw(playerOneHand);
                 stage = Stages.EVALUATE;
                 break;
