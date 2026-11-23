@@ -67,9 +67,9 @@ public class Playing extends State implements Statemethods {
     final private int winCoins = 50;
 
     
-    public int[] dealersHand = {0, 0, 0, 0};
-    public int[] playerOneHand = {0, 0, 0, 0};
-    public int[] botHand = {0, 0, 0, 0};
+    public int[] dealersHand = {-1, -1, -1, -1};
+    public int[] playerOneHand = {-1, -1, -1, -1};
+    public int[] botHand = {-1, -1, -1, -1};
 
     public List<Integer> applyPlayerHand = new ArrayList<>();
     public List<Integer> transPlayerHand = new ArrayList<>();
@@ -316,9 +316,9 @@ public class Playing extends State implements Statemethods {
     }
 
     public void resetAll() {
-        Arrays.fill(dealersHand, 0);
-        Arrays.fill(botHand, 0);
-        Arrays.fill(playerOneHand, 0);
+        Arrays.fill(dealersHand, -1);
+        Arrays.fill(botHand, -1);
+        Arrays.fill(playerOneHand, -1);
         Arrays.fill(CardsNum, 0);
         applyPlayerHand.clear();
         transPlayerHand.clear();
@@ -437,17 +437,13 @@ public class Playing extends State implements Statemethods {
     private void loadBackground() {
 
         backgroundImg = LoadSave.GetSpriteAtlas(
-            LoadSave.ninebynine
+            "res/background_playing.png"
         );
 
-        menuWidth = (int) (backgroundImg.getWidth() * 1f);
-        menuHeight = (int) (backgroundImg.getHeight() * 1f);
-
-        menuX = Game.GAME_WIDTH / 2 - menuWidth / 2;
-        menuY = (int) (0 * Game.SCALE);
-    }
-
-    public void loadCards() {
+        menuWidth = backgroundImg.getWidth();
+        menuHeight = Game.GAME_HEIGHT;
+        menuX =  Game.GAME_WIDTH / 2 - menuWidth / 2;
+        menuY = 0;
 
     }
 
@@ -463,58 +459,49 @@ public class Playing extends State implements Statemethods {
             menuWidth, menuHeight,
             null
         );
+        cardui.drawHands(
+            g,
+            backgroundImg,
+            menuX,
+            menuY,
+            menuWidth,
+            menuHeight,
+            stage == Stages.APPLY_EFFECTS || stage == Stages.RESET
+        );
 
-        g.setColor(Color.black);
+        g.setColor(Color.white);
         g.setFont(new Font(Font.MONOSPACED, Font.BOLD, Math.max(12, Game.GAME_HEIGHT / 48)));
 
         FontMetrics metrics = g.getFontMetrics();
 
         int middleX = (int) (Game.GAME_WIDTH / 2);
         int middleY = (int) (Game.GAME_HEIGHT / 2);
-        String DealerArrayToText = Arrays.toString(dealersHand);
-        String PlayerUsedCard = applyPlayerHand.toString();
-        String PlayerHandTrans = transPlayerHand.toString();
-        String ActualHandused = PlayerHand.toString();
-
-        String BotUsedCard = applyBotHand.toString();
-        String BotHandtransl = transBotHand.toString();
-        String ActualBotHand = BotHandAct.toString();
+        
 
         String PlayerText = "player: " + (username == null ? "" : username);
-        String DealerText = "dealerhand [" + DealerArrayToText + "]";
-        String PlayerArrayToText = Arrays.toString(playerOneHand);
-        String BotArrayToText = Arrays.toString(botHand);
+       
         String PhealtString = (username == null ? "" : username) + " health: " + PlayerOneHealth;
         String bothealthStr = "bot health: " + botHealth;
-        String playerShieldString = "Player shield: " + PlayerOneSh;
+        String playerShieldString = (username == null ? "" : username) + " shield: " + PlayerOneSh;
         String BotShieldString = "bot shield: " + botShield;
-        String playerAttackString = "player damage output: " + PlayerOneAttack;
+        String playerAttackString = (username == null ? "" : username) + " damage output: " + PlayerOneAttack;
         String botAttackString = "bot damage output: " + BotAttack;
-        String ApplyPlayerHand = "applys cards used: " + PlayerUsedCard;
-        String ApplyPlayerTrans = "matching rank: " + PlayerHandTrans;
-        String ApplyActualHand = "actual card used: " + ActualHandused;
+        
 
-        g.drawString(DealerText, middleX, middleY);
+        g.drawString(playerAttackString, middleX / 2 - 119, middleY + 145);
+        g.drawString(PlayerText, middleX, middleY + 145);
+       
+        g.drawString(playerShieldString, middleX, middleY + 390);
+        g.drawString(PhealtString, middleX, middleY + 410);
 
-        g.drawString(playerAttackString, middleX, middleY + 100);
-        g.drawString(PlayerText, middleX, middleY + 150);
-        g.drawString(PlayerArrayToText, middleX, middleY + 200);
-        g.drawString(ApplyActualHand, middleX, middleY + 250);
-        g.drawString(ApplyPlayerHand, middleX, middleY + 300);
-        g.drawString(ApplyPlayerTrans, middleX, middleY + 350);
-        g.drawString(playerShieldString, middleX, middleY + 400);
-        g.drawString(PhealtString, middleX, middleY + 430);
+        g.drawString(botAttackString, middleX /2 -119, middleY - 140);
+        g.drawString("bot", middleX , middleY - 140);
+        
+        g.drawString(BotShieldString, middleX, middleY - 390);
+        g.drawString(bothealthStr, middleX, middleY - 410);
 
-        g.drawString(botAttackString, middleX, middleY - 100);
-        g.drawString("bot", middleX, middleY - 150);
-        g.drawString(BotArrayToText, middleX, middleY - 200);
-        g.drawString("bot actual cards used: " + ActualBotHand, middleX, middleY - 250);
-        g.drawString("bot applys cards used: " + BotUsedCard, middleX, middleY - 300);
-        g.drawString("matching rank: " + BotHandtransl, middleX, middleY - 350);
-        g.drawString(BotShieldString, middleX, middleY - 400);
-        g.drawString(bothealthStr, middleX, middleY - 430);
-
-        g.drawRect(nextButton.x, nextButton.y, nextButton.width, nextButton.height);
+        g.setColor(Color.BLACK);
+        g.drawRect(nextButton.x , nextButton.y, nextButton.width, nextButton.height);
         g.drawString("Next", nextButton.x + 45, nextButton.y + 30);
 
     }

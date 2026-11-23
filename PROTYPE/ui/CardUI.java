@@ -4,15 +4,24 @@ import gamestates.Gamestate;
 import gamestates.Playing;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
+import utilz.LoadSave;
 
 
 public class CardUI {
 
     private Gamestate state;
     private BufferedImage[] imgs;
+    private BufferedImage[] dealersImgs;
+    private BufferedImage backImg;
     public int[] cards;
     public Playing playing;
+
+    private static final int[] CARD_X = {119, 360, 601, 842};
+    private static final int[] ROW_Y = {130, 504, 879};
+    private static final int CARD_WIDTH = 240;
+    private static final int CARD_HEIGHT = 300;
 
 
     public int[] clubsArray = {0, 4, 8, 12, 16};
@@ -26,6 +35,9 @@ public class CardUI {
 
     public CardUI(Playing playing) {
         this.playing = playing;
+        loadImgs();
+        loadDealersImgs();
+        backImg = LoadSave.GetSpriteAtlas("res/back_of_card.png");
     }
 
     public void CardActions(int rank, int cardNum, List<Integer> PlayCards) {
@@ -129,14 +141,91 @@ public class CardUI {
 
 
     private void loadImgs() {
-        imgs = new BufferedImage[2];
+        imgs = new BufferedImage[20];
+        for(int i = 0; i < imgs.length; i++){
+            imgs[i] = LoadSave.GetSpriteAtlas(
+                "res/" + i + ".png");
+        }
     }
 
-    public void draw(Graphics g) {
-        if(playing.PlayerHand != null ) {
-        
+    private void loadDealersImgs(){
+        dealersImgs = new BufferedImage[4];
+        for(int i = 0; i < dealersImgs.length; i++){
+            dealersImgs[i] = LoadSave.GetSpriteAtlas(
+            "res/d" + i + ".png");
         }
 
+    }
+
+    public void drawHands(
+        Graphics g,
+        BufferedImage background,
+        int backgroundX,
+        int backgroundY,
+        int backgroundWidth,
+        int backgroundHeight,
+        boolean showOnlyAppliedCards
+    ) {
+        drawHand(
+            g, playing.botHand, imgs,
+            showOnlyAppliedCards ? playing.BotHandAct : null, 0,
+            background, backgroundX, backgroundY,
+            backgroundWidth, backgroundHeight
+        );
+        drawHand(
+            g, playing.dealersHand, dealersImgs, null, 1,
+            background, backgroundX, backgroundY,
+            backgroundWidth, backgroundHeight
+        );
+        drawHand(
+            g, playing.playerOneHand, imgs,
+            showOnlyAppliedCards ? playing.PlayerHand : null, 2,
+            background, backgroundX, backgroundY,
+            backgroundWidth, backgroundHeight
+        );
+    }
+
+    private void drawHand(
+        Graphics g,
+        int[] hand,
+        BufferedImage[] images,
+        List<Integer> faceUpCards,
+        int row,
+        BufferedImage background,
+        int backgroundX,
+        int backgroundY,
+        int backgroundWidth,
+        int backgroundHeight
+    ) {
+        List<Integer> remainingFaceUpCards = faceUpCards == null
+            ? null
+            : new ArrayList<>(faceUpCards);
+
+        for (int i = 0; i < CARD_X.length; i++) {
+            int cardId = i < hand.length ? hand[i] : -1;
+            BufferedImage cardImage = backImg;
+
+            if (cardId >= 0 && cardId < images.length) {
+                if (remainingFaceUpCards == null) {
+                    cardImage = images[cardId];
+                } else {
+                    int faceUpIndex = remainingFaceUpCards.indexOf(cardId);
+                    if (faceUpIndex >= 0) {
+                        remainingFaceUpCards.remove(faceUpIndex);
+                        cardImage = images[cardId];
+                    }
+                }
+            }
+
+            int x = backgroundX
+                + CARD_X[i] * backgroundWidth / background.getWidth();
+            int y = backgroundY
+                + ROW_Y[row] * backgroundHeight / background.getHeight();
+            int width = CARD_WIDTH * backgroundWidth / background.getWidth();
+            int height = CARD_HEIGHT * backgroundHeight / background.getHeight();
+
+            g.drawImage(cardImage, x, y, width, height, null);
+        }
     }
 
     public void update() {

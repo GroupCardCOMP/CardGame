@@ -31,11 +31,11 @@ public class GameOver extends State implements Statemethods{
     private void loadBackground() {
 
         backgroundImg = LoadSave.GetSpriteAtlas(
-            LoadSave.ninebynine
+            "res/game_over_screen.png"
         );
 
         menuWidth = (int) (backgroundImg.getWidth() * 1f);
-        menuHeight = (int) (backgroundImg.getHeight() * 1f);
+        menuHeight = Game.GAME_HEIGHT;
 
         menuX = Game.GAME_WIDTH / 2 - menuWidth / 2;
         menuY = (int) (0 * Game.SCALE);
