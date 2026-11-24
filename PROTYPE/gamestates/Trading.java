@@ -33,7 +33,6 @@ public class Trading extends State implements Statemethods{
         loadBackground();
     }
 
-
     private void loadBackground() {
 
         backgroundImg = LoadSave.GetSpriteAtlas(
@@ -53,20 +52,20 @@ public class Trading extends State implements Statemethods{
              (int) (10 * Game.SCALEX),
             0, Gamestate.MENU
         );
-        
+
         //change these numbers depending on what fits in panel
         int c=307; //starting x value for cards
-        int r=150; //starting y value for cards
+        int r=15; //starting y value for cards
         for (int i=0; i<20;i++) { 
             c = (c +175); //how much space to add between cards, also increase initial start position
             if(i%5==0 && i!=0){ //after 5 cards changes the x and y values
                 c=482; //start of a row, starting x + 175
-                r=r+100; //increments y value
+                r=r+185; //increments y value
             }
             cards[i] = new DisplayCollection(c, r, 0); //creates a card 
         }
 
-        trade[0]= new StartTrade(832, 600, 0, Gamestate.TRADESERVER);//i dont know if this gamestate is needed
+        trade[0]= new StartTrade(175, 600, 0, Gamestate.TRADESERVER);//i dont know if this gamestate is needed
     }
 
     @Override
@@ -95,24 +94,29 @@ public class Trading extends State implements Statemethods{
         for (BackButton mb : backButton) {
             mb.draw(g);
         }
-
-        for (DisplayCollection c : cards){
-            c.draw(g);
-        }
         try{
             loadUserData();
         } catch(IOException a){
             System.out.println("error");
         }
+
+        for (int i=0;i<cards.length;i++){
+            if(playerCards[i]==0) {
+                cards[i].draw(g, 20);
+                break;
+            }
+            cards[i].draw(g,i);
+        }
+
         String copies = "Copies of card: ";//add num copies
         int c = 250;
-        int r = 208;
+        int r = 180;
         for (int i=0; i<20;i++) { 
             copies = copies + playerDuplicates[i];
             c = (c +175); //how much space to add between cards, also increase initial start position
             if(i%5==0 && i!=0){ //after 5 cards changes the x and y values
                 c=425; //start of a row, starting x + 175
-                r=r+100; //increments y value
+                r=r+185; //increments y value
             }
             g.drawString(copies,c,r);
             copies = "Copies of card: ";
@@ -163,10 +167,10 @@ public class Trading extends State implements Statemethods{
         }
         
         for (int i = 0; i < trade.length; i++) {
-            if(connected){ //stops user from opening 2 trade panels. Dont allow trading with yourself. 
+            /*if(connected){ //stops user from opening 2 trade panels. Dont allow trading with yourself. 
                 JOptionPane.showMessageDialog(null,"Already connected", "Connection", JOptionPane.OK_OPTION);
                 break;
-            }
+            }*/
             StartTrade mb = trade[i];
             String[] options = {"Host (Player 1)", "Join (Player 2)"};// Pop-up dialog to choose Host (Player 1) or Client (Player 2)
             int choice = JOptionPane.showOptionDialog(null, "Select your role:", "Card Trader Setup",
@@ -183,7 +187,6 @@ public class Trading extends State implements Statemethods{
                         if (choice == 0) { //calls CardTrade popup, become host
                             new CardTrade(username, playerCards, playerDuplicates, true, "localhost", 5000);
                             connected=true;
-                            
                         } else if (choice == 1) { //calls CardTrade popup, join as 2nd player
                             new CardTrade(username, playerCards, playerDuplicates, false, "localhost", 5000);
                             connected=true;

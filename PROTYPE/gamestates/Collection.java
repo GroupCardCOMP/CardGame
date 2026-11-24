@@ -5,7 +5,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
 import main.Game;
 import main.UserAccounts;
 import ui.BackButton;
@@ -52,12 +51,12 @@ public class Collection extends State implements Statemethods{
         
         //change these numbers depending on what fits in panel
         int c=307; //starting x value for cards
-        int r=150; //starting y value for cards
+        int r=15; //starting y value for cards
         for (int i=0; i<20;i++) { 
             c = (c +175); //how much space to add, also increase start position
             if(i%5==0 && i!=0){
                 c=482; //start of a row, starting x + 175
-                r=r+100;
+                r=r+185;
             }
             cards[i] = new DisplayCollection(c, r, 0); //creates a card 
         }
@@ -83,24 +82,29 @@ public class Collection extends State implements Statemethods{
         for (BackButton mb : backButton) {
             mb.draw(g);
         }
-
-        for (DisplayCollection c : cards){
-            c.draw(g);
-        }
         try{
             loadUserData();
         } catch(IOException a){
             System.out.println("error");
         }
+
+        for (int i=0;i<cards.length;i++){
+            if(playerCards[i]==0) {
+                cards[i].draw(g, 20);
+                break;
+            }
+            cards[i].draw(g,i);
+        }
+          
         String copies = "Copies of card: ";//add num copies
         int c = 250;
-        int r = 208;
+        int r = 180;
         for (int i=0; i<20;i++) { 
             copies = copies + playerDuplicates[i];
             c = (c +175); //how much space to add between cards, also increase initial start position
             if(i%5==0 && i!=0){ //after 5 cards changes the x and y values
                 c=425; //start of a row, starting x + 175
-                r=r+100; //increments y value
+                r=r+185; //increments y value
             }
             g.drawString(copies,c,r);
             copies = "Copies of card: ";
@@ -139,8 +143,6 @@ public class Collection extends State implements Statemethods{
                 break;
             }
         }
-
-        
             resetButtons();
         
     }

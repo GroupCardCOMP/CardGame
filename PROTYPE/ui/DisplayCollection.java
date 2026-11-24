@@ -3,8 +3,10 @@ package ui;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import static utilz.Constants.UI.Buttons.*;
-import utilz.LoadSave;
 
 
 public class DisplayCollection {
@@ -27,17 +29,31 @@ public class DisplayCollection {
     }
 
     private void loadImgs() {
-        imgs = new BufferedImage[3];
-        BufferedImage temp = LoadSave.GetSpriteAtlas(LoadSave.AccMenuButton); //currently backbutton
-        for (int i = 0; i < imgs.length; i++) {
-            imgs[i] = temp.getSubimage(i * B_WIDTH_DEFAULT, rowIndex * B_HEIGHT_DEFAULT, B_WIDTH_DEFAULT, B_HEIGHT_DEFAULT);
+        imgs = new BufferedImage[21]; 
+        //get all card images
+        BufferedImage temp= null; 
+        try {
+            temp = ImageIO.read(new File("PROTYPE/res/back_of_card.png"));
+        } catch (IOException e) {
+            System.out.println("Error loading image: " + e.getMessage());
+        } 
+        imgs[20]= temp;
+        for (int i = 0; i < 20; i++) {
+            String file = i+".png";
+            try {
+                temp = ImageIO.read(new File("PROTYPE/res/"+file));
+            } catch (IOException e) {
+                System.out.println("Error loading image: " + e.getMessage());
+            } 
+            imgs[i] = temp;
         }
 
     }
 
-    public void draw(Graphics g) {
-        g.drawImage(imgs[index], xPos - xOffsetCenter, yPos,  B_WIDTHS, B_HEIGHTS, null);
+    public void draw(Graphics g, int i) {
+        g.drawImage(imgs[i], xPos - xOffsetCenter, yPos,  B_WIDTHS, 150, null);
     }
+
     public void update() {
         // Update the button state if needed
         index = 0;
