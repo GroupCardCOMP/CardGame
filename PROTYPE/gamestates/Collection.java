@@ -91,7 +91,7 @@ public class Collection extends State implements Statemethods{
         for (int i=0;i<cards.length;i++){
             if(playerCards[i]==0) {
                 cards[i].draw(g, 20);
-                break;
+                continue;
             }
             cards[i].draw(g,i);
         }
