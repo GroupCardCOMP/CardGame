@@ -103,7 +103,7 @@ public class Trading extends State implements Statemethods{
         for (int i=0;i<cards.length;i++){
             if(playerCards[i]==0) {
                 cards[i].draw(g, 20);
-                break;
+                continue;
             }
             cards[i].draw(g,i);
         }
@@ -191,7 +191,6 @@ public class Trading extends State implements Statemethods{
                             new CardTrade(username, playerCards, playerDuplicates, false, "localhost", 5000);
                             connected=true;
                         }
-                        break;
                     }
                 }
                 break;
