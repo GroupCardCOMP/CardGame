@@ -367,7 +367,7 @@ public class Playing extends State implements Statemethods {
                 stage = Stages.BOTH_DRAW;
                 break;
             case BOTH_DRAW:
-                hardBotDraw(botHand);
+                BotDraw(botHand);
                 PlayerDraw(playerOneHand);
                 stage = Stages.EVALUATE;
                 break;
@@ -530,12 +530,12 @@ public class Playing extends State implements Statemethods {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
     }
 
 }

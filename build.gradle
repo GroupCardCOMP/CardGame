@@ -1,0 +1,19 @@
+plugins {
+    id 'application'
+}
+
+application {
+    mainClass = 'main.MainClass'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['PROTYPE']
+        }
+        resources {
+            srcDirs = ['PROTYPE']
+            include 'res/**'
+        }
+    }
+}

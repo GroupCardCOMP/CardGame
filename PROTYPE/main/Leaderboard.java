@@ -77,8 +77,11 @@ public final class Leaderboard {
                     StandardCharsets.UTF_8
                 );
 
-                int wins = MatchHistory.wins(lines);
-                int losses = MatchHistory.losses(lines);
+                int wins = 0;
+                int losses = 0;
+                
+                //int wins = MatchHistory.wins(lines);
+                //int losses = MatchHistory.losses(lines);
 
                 entries.add(
                     new Entry(username, wins, losses)
